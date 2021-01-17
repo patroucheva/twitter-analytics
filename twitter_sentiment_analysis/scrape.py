@@ -3,8 +3,8 @@ import logging
 import os
 import requests
 
-bearer_token = os.environ.get("BEARER_TOKEN")
-headers = {"Authorization": f"Bearer {bearer_token}"}
+BEARER_TOKEN = ""
+headers = {"Authorization": f"Bearer {BEARER_TOKEN}"}
 
 def get_rules():
 
@@ -36,12 +36,11 @@ def delete_all_rules():
             )
         )
 
-
 def set_rules():
     
     sample_rules = [
-        {"value": "dog has:images", "tag": "dog pictures"},
-        {"value": "cat has:images -grumpy", "tag": "cat pictures"},
+        {"value": "dog has:images lang:en", "tag": "dog pictures"},
+        {"value": "cat has:images -grumpy lang:en", "tag": "cat pictures"},
     ]
     payload = {"add": sample_rules}
     response = requests.post(
@@ -59,7 +58,6 @@ def get_stream():
     response = requests.get(
         "https://api.twitter.com/2/tweets/search/stream", headers=headers, stream=True,
     )
-    print(response.status_code)
     if response.status_code != 200:
         raise Exception(
             "Cannot get stream (HTTP {}): {}".format(
@@ -76,7 +74,6 @@ def main():
     delete_all_rules()
     set_rules()
     get_stream()
-
 
 if __name__ == "__main__":
     main()
