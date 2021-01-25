@@ -10,6 +10,8 @@ RULE = ""
 headers = {"Authorization": f"Bearer {BEARER_TOKEN}"}
 
 def get_rules():
+    
+    """A function that returns all existing rules."""
 
     response = requests.get(
         "https://api.twitter.com/2/tweets/search/stream/rules", headers=headers
@@ -20,7 +22,9 @@ def get_rules():
         )
 
 def delete_all_rules():
-
+    
+    """A function that deletes all existing rules."""
+    
     rules = get_rules()
     if rules is None or "data" not in rules:
         return None
@@ -41,6 +45,8 @@ def delete_all_rules():
 
 def set_rules():
     
+    """A function that sets a new rule."""
+    
     rule = [
         {"value": RULE , "tag": RULE},
     ]
@@ -57,15 +63,20 @@ def set_rules():
 
 
 def get_stream():
+    
+    """Prints a stream of polarity scores for all incoming tweets matching current rule."""
+    
     response = requests.get(
         "https://api.twitter.com/2/tweets/search/stream", headers=headers, stream=True,
     )
+    
     if response.status_code != 200:
         raise Exception(
             "Cannot get stream (HTTP {}): {}".format(
                 response.status_code, response.text
             )
         )
+        
     analyzer = SentimentIntensityAnalyzer()
     for response_line in response.iter_lines():
         if response_line:
