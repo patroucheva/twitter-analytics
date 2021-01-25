@@ -1,9 +1,12 @@
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+
 import json
 import logging
 import os
 import requests
 
 BEARER_TOKEN = ""
+RULE = ""
 headers = {"Authorization": f"Bearer {BEARER_TOKEN}"}
 
 def get_rules():
@@ -38,11 +41,10 @@ def delete_all_rules():
 
 def set_rules():
     
-    sample_rules = [
-        {"value": "dog has:images lang:en", "tag": "dog pictures"},
-        {"value": "cat has:images -grumpy lang:en", "tag": "cat pictures"},
+    rule = [
+        {"value": RULE , "tag": RULE},
     ]
-    payload = {"add": sample_rules}
+    payload = {"add": rule}
     response = requests.post(
         "https://api.twitter.com/2/tweets/search/stream/rules",
         headers=headers,
@@ -64,10 +66,14 @@ def get_stream():
                 response.status_code, response.text
             )
         )
+    analyzer = SentimentIntensityAnalyzer()
     for response_line in response.iter_lines():
         if response_line:
             json_response = json.loads(response_line)
-            print(json_response)
+            tweet = json_response['data']['text']
+            sentiment = analyzer.polarity_scores(tweet)
+            print(sentiment)
+            
 
 
 def main():

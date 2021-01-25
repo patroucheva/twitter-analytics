@@ -1,1 +1,4 @@
+nltk==3.3
+pandas==1.2.0
 requests==2.25.1
+twython==3.8.0
